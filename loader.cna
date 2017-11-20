@@ -2,3 +2,4 @@
 # Idea taken from Und3rf10w
 
 include(script_resource("elevate/elevate.cna"));
+include(script_resource("persistence/persistence.cna"));

