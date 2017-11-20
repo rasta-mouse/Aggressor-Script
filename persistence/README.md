@@ -2,7 +2,7 @@
 
 ### PowerShell HKCU via PSReflect
 
-Accepts a basic base64'd (to avoid escaping pain) download cradle.  Writes it to HKCU\Software\Microsoft\Windows\Run\`0pwned using a modified version of [PSReflect](https://github.com/mattifestation/PSReflect) and [RegHide](https://gist.github.com/brianreitz/feb4e14bd45dd2e4394c225b17df5741#file-psreflect-reghide-ps1).
+Accepts a basic base64'd (to avoid escaping pain) download cradle.  Writes it to HKCU\Software\Microsoft\Windows\Run\\`0pwned using a modified version of [PSReflect](https://github.com/mattifestation/PSReflect) and [RegHide](https://gist.github.com/brianreitz/feb4e14bd45dd2e4394c225b17df5741#file-psreflect-reghide-ps1).
 
 ![HKCU (PSH)](images/hkcu_psh.png)
 
