@@ -14,4 +14,5 @@ Basic Example:
 ### Windows Service Persistence
 
 Creates a Windows Service (running as SYSTEM) with the specified options and uses `sc sdset` to assign start/stop permissions to the user SID. Requires you to manually upload a payload.
+
 ![Service](images/service.png)
